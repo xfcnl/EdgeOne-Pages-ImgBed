@@ -1,1 +1,1 @@
-# EdoeOne-Pages-ImgBed
+# EdgeOne-Pages-ImgBed

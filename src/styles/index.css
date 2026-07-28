@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primary: #3b82f6;
+  --color-primary-dark: #2563eb;
+  --color-sidebar-bg: #f8fafc;
+  --color-sidebar-bg-dark: #1e293b;
+  --color-gallery-bg: #ffffff;
+  --color-gallery-bg-dark: #0f172a;
+}
