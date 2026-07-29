@@ -99,8 +99,17 @@ export default function ImageDetail({ image, onClose, onDelete, onAddToAlbum }) 
           </div>
         </div>
 
-        {showAlbumPicker && (
-          <div className="absolute inset-0 bg-white dark:bg-slate-800 rounded-xl flex flex-col">
+      </div>
+
+      {showAlbumPicker && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/30"
+          onClick={() => setShowAlbumPicker(false)}
+        >
+          <div
+            className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-80 max-h-[60vh] flex flex-col"
+            onClick={e => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-sm font-medium text-gray-900 dark:text-white">添加到相簿</h3>
               <button
@@ -131,10 +140,18 @@ export default function ImageDetail({ image, onClose, onDelete, onAddToAlbum }) 
               )}
             </div>
           </div>
-        )}
+        </div>
+      )}
 
-        {showLinkPicker && (
-          <div className="absolute inset-0 bg-white dark:bg-slate-800 rounded-xl flex flex-col">
+      {showLinkPicker && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/30"
+          onClick={() => { setShowLinkPicker(false); setCopied(false) }}
+        >
+          <div
+            className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-80 max-h-[60vh] flex flex-col"
+            onClick={e => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
               <h3 className="text-sm font-medium text-gray-900 dark:text-white">
                 {copied ? '已复制到剪贴板!' : '复制链接'}
@@ -160,8 +177,8 @@ export default function ImageDetail({ image, onClose, onDelete, onAddToAlbum }) 
               ))}
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }
