@@ -1,32 +1,77 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import { useSettings } from '../../hooks/useSettings'
+import { useInviteCodes } from '../../hooks/useInviteCodes'
 
-export default function RegisterForm() {
+export default function RegisterForm({ initialInviteCode = '' }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [inviteCode, setInviteCode] = useState(initialInviteCode)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const { signUp } = useAuth()
+  const { settings, loading: settingsLoading } = useSettings()
+  const { validateCode, markUsed } = useInviteCodes()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (initialInviteCode) setInviteCode(initialInviteCode)
+  }, [initialInviteCode])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
-    const { error: err } = await signUp(email, password)
+
+    if (settings?.registration_mode === 'restricted') {
+      if (!inviteCode.trim()) {
+        setError('请输入邀请码')
+        return
+      }
+      const result = await validateCode(inviteCode.trim())
+      if (!result.valid) {
+        setError('邀请码无效或已过期')
+        return
+      }
+    }
+
+    const { data, error: err } = await signUp(email, password)
     if (err) {
       setError(err.message)
-    } else {
-      setSuccess(true)
-      setTimeout(() => navigate('/login'), 2000)
+      return
     }
+
+    if (settings?.registration_mode === 'restricted' && data?.user) {
+      const result = await validateCode(inviteCode.trim())
+      if (result.valid && result.id) {
+        await markUsed(result.id, data.user.id)
+      }
+    }
+
+    setSuccess(true)
+    setTimeout(() => navigate('/login'), 2000)
+  }
+
+  if (settingsLoading) {
+    return <div className="text-center text-sm text-gray-400 py-4">加载中...</div>
+  }
+
+  if (settings?.registration_mode === 'private') {
+    return (
+      <div className="text-center py-4">
+        <svg className="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+        <p className="text-gray-500 dark:text-gray-400">当前暂未开放注册</p>
+      </div>
+    )
   }
 
   if (success) {
     return (
       <div className="text-center">
-        <p className="text-green-500 mb-2">注册成功！请查看邮箱确认链接。</p>
-        <p className="text-sm text-gray-500">即将跳转到登录页...</p>
+        <p className="text-green-500 mb-2">注册成功！即将跳转到登录页...</p>
+        <p className="text-sm text-gray-500">请使用注册的邮箱和密码登录</p>
       </div>
     )
   }
@@ -60,6 +105,22 @@ export default function RegisterForm() {
           className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
+      {settings?.registration_mode === 'restricted' && (
+        <div>
+          <label htmlFor="inviteCode" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            邀请码
+          </label>
+          <input
+            id="inviteCode"
+            type="text"
+            required
+            value={inviteCode}
+            onChange={e => setInviteCode(e.target.value)}
+            placeholder="请输入邀请码"
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      )}
       {error && <p className="text-red-500 text-sm">{error}</p>}
       <button
         type="submit"

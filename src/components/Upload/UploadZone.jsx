@@ -100,7 +100,7 @@ export default function UploadZone({ files, uploading, progress, error, onFilesC
             拖拽图片到此处，或点击选择
           </p>
           <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-            支持 JPG / PNG / GIF / WebP，单张最大 512KB（超过自动压缩），一次最多 20 张
+            支持 JPG / PNG / GIF / WebP，单张最大 512KB，一次最多 20 张
           </p>
           <input
             ref={inputRef}

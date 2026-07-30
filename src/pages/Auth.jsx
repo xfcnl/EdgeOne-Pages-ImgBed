@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import LoginForm from '../components/Auth/LoginForm'
 import RegisterForm from '../components/Auth/RegisterForm'
@@ -9,6 +9,11 @@ export default function Auth() {
   const location = useLocation()
   const navigate = useNavigate()
   const isRegister = location.pathname === '/register'
+
+  const inviteCode = useMemo(() => {
+    const params = new URLSearchParams(location.search)
+    return params.get('invite') || ''
+  }, [location.search])
 
   useEffect(() => {
     if (!loading && user) {
@@ -34,7 +39,7 @@ export default function Auth() {
           </p>
         </div>
         <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-          {isRegister ? <RegisterForm /> : <LoginForm />}
+          {isRegister ? <RegisterForm initialInviteCode={inviteCode} /> : <LoginForm />}
         </div>
       </div>
     </div>
