@@ -1,6 +1,4 @@
-import { useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { seedAdmin } from './lib/seedAdmin'
 import MainLayout from './components/Layout/MainLayout'
 import ProtectedRoute from './components/Auth/ProtectedRoute'
 import Auth from './pages/Auth'
@@ -24,8 +22,6 @@ function Banned() {
 }
 
 export default function App() {
-  useEffect(() => { seedAdmin() }, [])
-
   return (
     <Routes>
       <Route path="/login" element={<Auth />} />

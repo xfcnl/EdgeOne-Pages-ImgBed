@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 import { useSettings } from '../../hooks/useSettings'
 import { useInviteCodes } from '../../hooks/useInviteCodes'
@@ -13,7 +13,6 @@ export default function RegisterForm({ initialInviteCode = '' }) {
   const { signUp } = useAuth()
   const { settings, loading: settingsLoading } = useSettings()
   const { validateCode, markUsed } = useInviteCodes()
-  const navigate = useNavigate()
 
   useEffect(() => {
     if (initialInviteCode) setInviteCode(initialInviteCode)
@@ -35,7 +34,9 @@ export default function RegisterForm({ initialInviteCode = '' }) {
       }
     }
 
-    const { data, error: err } = await signUp(email, password)
+    const { data, error: err } = await signUp(email, password, {
+      emailRedirectTo: window.location.origin,
+    })
     if (err) {
       setError(err.message)
       return
@@ -49,7 +50,6 @@ export default function RegisterForm({ initialInviteCode = '' }) {
     }
 
     setSuccess(true)
-    setTimeout(() => navigate('/login'), 2000)
   }
 
   if (settingsLoading) {
@@ -70,8 +70,18 @@ export default function RegisterForm({ initialInviteCode = '' }) {
   if (success) {
     return (
       <div className="text-center">
-        <p className="text-green-500 mb-2">注册成功！即将跳转到登录页...</p>
-        <p className="text-sm text-gray-500">请使用注册的邮箱和密码登录</p>
+        <p className="text-green-500 mb-2">注册成功！</p>
+        <p className="text-sm text-gray-500">
+          验证邮件已发送至 <span className="font-medium">{email}</span>，
+          请点击邮件中的链接完成验证后再登录
+        </p>
+        <p className="text-sm text-gray-400 mt-1">未验证的邮箱无法登录，请勿关闭本页</p>
+        <Link
+          to="/login"
+          className="inline-block mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors cursor-pointer"
+        >
+          验证完成后去登录
+        </Link>
       </div>
     )
   }

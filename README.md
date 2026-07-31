@@ -50,6 +50,7 @@ pnpm install
 ```env
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_ADMIN_EMAIL=your-admin@example.com
 ```
 
 3. 运行数据库迁移：
@@ -63,6 +64,12 @@ supabase migration up
 ```bash
 pnpm dev
 ```
+
+### 创建管理员账号
+
+管理员不通过前端自动创建，请在 Supabase 控制台（Authentication → Users）手动注册
+一个账号，邮箱必须与 `VITE_ADMIN_EMAIL` 一致。该账号首次登录后会自动被提升为
+admin 角色。
 
 ### 部署到 EdgeOne Pages
 

@@ -50,18 +50,6 @@ export default function LoginForm() {
       >
         登录
       </button>
-      {import.meta.env.VITE_ADMIN_EMAIL && import.meta.env.VITE_ADMIN_PASSWORD && (
-        <button
-          type="button"
-          onClick={() => {
-            setEmail(import.meta.env.VITE_ADMIN_EMAIL)
-            setPassword(import.meta.env.VITE_ADMIN_PASSWORD)
-          }}
-          className="w-full py-2 px-4 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300 rounded-lg transition-colors duration-200 cursor-pointer text-sm mt-2"
-        >
-          管理员登录
-        </button>
-      )}
       <p className="text-sm text-center text-gray-500 dark:text-gray-400">
         还没有账号？
         <Link to="/register" className="text-blue-500 hover:text-blue-600 ml-1">注册</Link>
