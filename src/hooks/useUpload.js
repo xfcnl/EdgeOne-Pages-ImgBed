@@ -77,7 +77,9 @@ export function useUpload() {
         setError(`"${file.name}" 超过 512KB 限制`)
         continue
       }
-      const filePath = `${user.id}/${Date.now()}-${file.name}`
+      const extMatch = /\.([a-zA-Z0-9]{1,10})$/.exec(file.name)
+      const safeExt = extMatch ? `.${extMatch[1].toLowerCase()}` : ''
+      const filePath = `${user.id}/${Date.now()}-${crypto.randomUUID()}${safeExt}`
 
       const { error: uploadError } = await supabase.storage
         .from('edgeone-pages-imgbed')
