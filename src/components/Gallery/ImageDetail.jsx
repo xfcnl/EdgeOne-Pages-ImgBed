@@ -19,11 +19,18 @@ export default function ImageDetail({ image, onClose, onDelete, onAddToAlbum }) 
 
   const handleDelete = async () => {
     setDeleting(true)
-    const filename = image.url.split('/').pop()
-    await supabase.storage.from('edgeone-pages-imgbed').remove([fileName])
-    await supabase.from('images').delete().eq('id', image.id)
-    onDelete?.(image.id)
-    setDeleting(false)
+    try {
+      const filename = image.url.split('/').pop()
+      const { error: storageError } = await supabase.storage.from('edgeone-pages-imgbed').remove([filename])
+      if (storageError) throw storageError
+      const { error: dbError } = await supabase.from('images').delete().eq('id', image.id)
+      if (dbError) throw dbError
+      onDelete?.(image.id)
+    } catch (err) {
+      alert(`删除失败: ${err.message}`)
+    } finally {
+      setDeleting(false)
+    }
   }
 
   const handleCopyLink = async (format) => {
